@@ -9,13 +9,14 @@ app.use(express.json());
 
 let accessToken = "";
 
+// Fetch a new access token
 const getAccessToken = async () => {
   try {
     const credentials = `${process.env.PESAPAL_CONSUMER_KEY}:${process.env.PESAPAL_CONSUMER_SECRET}`;
     const encoded = Buffer.from(credentials).toString("base64");
 
     const response = await axios.get(
-      "https://pay.pesapal.com/v3/api/Auth/RequestToken",
+      "https://cybqa.pesapal.com/pesapalv3/api/Auth/RequestToken",
       {
         headers: {
           Authorization: `Basic ${encoded}`,
@@ -25,34 +26,36 @@ const getAccessToken = async () => {
     );
 
     accessToken = response.data.token;
-    console.log("Access Token fetched successfully.");
+    console.log("Access token fetched.");
   } catch (error) {
-    console.error("Failed to get access token:", error.response?.data || error.message);
+    console.error("Error fetching access token:", error.response?.data || error.message);
+    throw new Error("Failed to get access token");
   }
 };
 
-getAccessToken();
-
+// STK Push Endpoint
 app.post("/stk-push", async (req, res) => {
   const { phone, amount } = req.body;
 
-  const orderDetails = {
-    amount,
-    currency: "KES",
-    description: "M-PESA Payment",
-    callback_url: "https://example.com/callback",
-    billing_address: {
-      phone_number: phone,
-      email_address: "client@example.com",
-      country_code: "KE",
-      first_name: "Customer",
-      last_name: "One",
-    },
-  };
-
   try {
+    await getAccessToken(); // Always refresh token
+
+    const orderDetails = {
+      amount,
+      currency: "KES",
+      description: "Test M-PESA Payment",
+      callback_url: "https://example.com/callback", // Update this for production
+      billing_address: {
+        phone_number: phone,
+        email_address: "client@example.com",
+        country_code: "KE",
+        first_name: "Customer",
+        last_name: "One",
+      },
+    };
+
     const response = await axios.post(
-      "https://pay.pesapal.com/v3/api/Transactions/SubmitOrderRequest",
+      "https://cybqa.pesapal.com/pesapalv3/api/Transactions/SubmitOrderRequest",
       orderDetails,
       {
         headers: {
@@ -62,12 +65,14 @@ app.post("/stk-push", async (req, res) => {
       }
     );
 
+    console.log("Payment initiated:", response.data);
     res.json(response.data);
   } catch (error) {
     console.error("STK Push error:", error.response?.data || error.message);
-    res.status(500).json({ error: "Failed to initiate payment" });
+    res.status(500).json({ error: "Payment request failed" });
   }
 });
 
+// Start Server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
