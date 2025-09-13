@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🏥 Patient Registration</title>
+  <style>
+    :root {
+      --primary: #0d47a1;
+      --primary-dark: #08306b;
+      --secondary: #f0f4f8;
+      --text: #333;
+      --success: #28a745;
+      --error: #dc3545;
+      --warning: #ffc107;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: var(--secondary);
+      margin: 0;
+      padding: 40px 20px;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary);
+      font-size: 2rem;
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #444;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 5px rgba(13,71,161,0.3);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background-color: var(--primary);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    button.toggle-btn {
+      background-color: #6c757d;
+      max-width: 250px;
+      margin: 0 auto 15px;
+    }
+    
+    button.toggle-btn:hover {
+      background-color: #5a6268;
+    }
+
+    #status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+    }
+    
+    .status-success {
+      background-color: #d4edda;
+      color: var(--success);
+      border: 1px solid #c3e6cb;
+    }
+    
+    .status-error {
+      background-color: #f8d7da;
+      color: var(--error);
+      border: 1px solid #f5c6cb;
+    }
+
+    /* Registered Patients Table */
+    #patientListContainer {
+      width: 100%;
+      max-width: 900px;
+      margin-top: 20px;
+    }
+    
+    .table-container {
+      overflow-x: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+      min-width: 600px;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    thead {
+      background-color: var(--primary);
+      color: #fff;
+    }
+
+    tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 20px;
+      font-style: italic;
+      color: #6c757d;
+    }
+    
+    .critical {
+      color: var(--error);
+      font-weight: bold;
+    }
+    
+    .normal {
+      color: var(--success);
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 10px;
+      }
+      
+      .container {
+        padding: 20px;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🏥 Patient Registration</h1>
+
+    <form id="regForm">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="Enter full name" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input type="number" id="age" placeholder="Enter age" required min="1" max="120">
+      </div>
+      
+      <div class="form-group">
+        <label for="gender">Gender</label>
+        <select id="gender" required>
+          <option value="" disabled selected>Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="disease">Disease/Condition</label>
+        <input type="text" id="disease" placeholder="Enter disease or condition" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="statusSelect">Patient Status</label>
+        <select id="statusSelect" required>
+          <option value="" disabled selected>Select Status</option>
+          <option value="Critical">Critical</option>
+          <option value="Normal">Normal</option>
+        </select>
+      </div>
+
+      <button type="submit">Register Patient</button>
+    </form>
+
+    <div id="status"></div>
+  </div>
+
+  <div id="patientListContainer">
+    <button class="toggle-btn" onclick="togglePatientList()">Hide Registered Patients</button>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Disease</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="patientTable">
+          <tr>
+            <td colspan="5" class="loading">Loading patient data...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    // Firebase configuration - Replace with your actual config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCBYDdyJv3xjndhMm_86kiOFj047Zmoq28",
+      authDomain: "my-project-6b9f1.firebaseapp.com",
+      projectId: "my-project-6b9f1",
+      storageBucket: "my-project-6b9f1.firebasestorage.app",
+      messagingSenderId: "831843294334",
+      appId: "1:831843294334:web:abc123def456", // Fixed the appId format
+      measurementId: "G-BZJPSXR0D2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const regForm = document.getElementById("regForm");
+    const status = document.getElementById("status");
+    const patientListContainer = document.getElementById("patientListContainer");
+    const patientTable = document.getElementById("patientTable");
+    let listVisible = true;
+
+    regForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const age = document.getElementById("age").value;
+      const disease = document.getElementById("disease").value.trim();
+      const gender = document.getElementById("gender").value;
+      const patientStatus = document.getElementById("statusSelect").value;
+
+      // Basic validation
+      if (!name || !age || !disease || !gender || !patientStatus) {
+        showStatus("Please fill all fields", "error");
+        return;
+      }
+
+      try {
+        // Check for duplicate
+        const q = query(collection(db, "patients"), where("nameLower", "==", name.toLowerCase()));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          showStatus(`Patient "${name}" is already registered!`, "error");
+          return;
+        }
+
+        const docRef = await addDoc(collection(db, "patients"), {
+          name,
+          age,
+          disease,
+          gender,
+          patientStatus,
+          stage: "registered",
+          nameLower: name.toLowerCase(),
+          registeredAt: new Date()
+        });
+
+        showStatus(`Patient Registered Successfully! ID: ${docRef.id}`, "success");
+        regForm.reset();
+
+        fetchPatients();
+
+      } catch (error) {
+        showStatus("Registration Error: " + error.message, "error");
+        console.error("Error adding document: ", error);
+      }
+    });
+
+    function showStatus(message, type) {
+      status.textContent = message;
+      status.className = type === "success" ? "status-success" : "status-error";
+      
+      // Auto hide success messages after 5 seconds
+      if (type === "success") {
+        setTimeout(() => {
+          status.textContent = "";
+          status.className = "";
+        }, 5000);
+      }
+    }
+
+    async function fetchPatients() {
+      try {
+        const snapshot = await getDocs(collection(db, "patients"));
+        
+        if (snapshot.empty) {
+          patientTable.innerHTML = '<tr><td colspan="5" class="loading">No patients registered yet</td></tr>';
+          return;
+        }
+
+        patientTable.innerHTML = "";
+        snapshot.forEach(docSnap => {
+          const p = docSnap.data();
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${p.name}</td>
+            <td>${p.age}</td>
+            <td>${p.gender}</td>
+            <td>${p.disease}</td>
+            <td class="${p.patientStatus.toLowerCase()}">${p.patientStatus}</td>
+          `;
+          patientTable.appendChild(tr);
+        });
+      } catch (error) {
+        patientTable.innerHTML = '<tr><td colspan="5" class="loading">Error loading patient data</td></tr>';
+        console.error("Error fetching patients: ", error);
+      }
+    }
+
+    function togglePatientList() {
+      const table = patientTable.parentElement.parentElement;
+      const button = document.querySelector(".toggle-btn");
+      
+      if (table.style.display === "none") {
+        table.style.display = "table";
+        button.textContent = "Hide Registered Patients";
+        listVisible = true;
+      } else {
+        table.style.display = "none";
+        button.textContent = "Show Registered Patients";
+        listVisible = false;
+      }
+    }
+
+    // Load patients on page load
+    fetchPatients();
+  </script>
+</body>
+</html>

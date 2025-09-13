@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💰 Patient Billing</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1 {
+      color: #6a1b9a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    /* Search Bar */
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .search-bar button {
+      padding: 10px 20px;
+      background-color: #6a1b9a;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .search-bar button:hover {
+      background-color: #4a148c;
+    }
+
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+      background-color: #fff;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead {
+      background-color: #6a1b9a;
+      color: #fff;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tbody tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Action button */
+    .bill-btn {
+      background-color: #6a1b9a;
+      color: #fff;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .bill-btn:hover {
+      background-color: #4a148c;
+    }
+
+    /* Status message */
+    #status {
+      margin-top: 15px;
+      font-weight: 600;
+      color: green;
+    }
+
+    #totalBill {
+      margin-top: 15px;
+      font-weight: 600;
+      color: #6a1b9a;
+    }
+
+    /* --- Modal Styles --- */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      padding-top: 100px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 300px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .modal-content h2 {
+      color: #6a1b9a;
+      margin-bottom: 15px;
+    }
+    .modal-content label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .modal-content input,
+    .modal-content select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .modal-content button {
+      margin-top: 15px;
+      width: 100%;
+      background-color: #6a1b9a;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .modal-content button:hover {
+      background-color: #4a148c;
+    }
+    .close {
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #666;
+    }
+    .close:hover { color: #000; }
+  </style>
+</head>
+<body>
+  <h1>💰 Patient Billing</h1>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input id="searchInput" type="text" placeholder="🔍 Search patient by name...">
+    <button onclick="fetchPatients()">Refresh</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Disease</th>
+
+          <th>Stage</th>
+          <th>Bill Amount</th>
+          <th>Amount Paid</th>
+          <th>Payment Mode</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="patientTable"></tbody>
+    </table>
+  </div>
+
+  <!-- Total + Status -->
+  <p id="totalBill"></p>
+  <p id="status"></p>
+
+  <!-- Modal for Billing -->
+  <div id="billingModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>💰 Update Billing</h2>
+
+      <label>Bill Amount</label>
+      <input type="number" id="billAmountInput" placeholder="Enter Bill Amount">
+
+      <label>Amount Paid</label>
+      <input type="number" id="paidAmountInput" placeholder="Enter Amount Paid">
+
+      <label>Payment Mode</label>
+      <select id="paymentModeSelect">
+        <option value="mpesa">Mpesa</option>
+        <option value="cash">Cash</option>
+        <option value="sha">Paid by SHA</option>
+      </select>
+
+      <button id="saveBillingBtn">💾 Save Billing</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCBYDdyJv3xjndhMm_86kiOFj047Zmoq28",
+      authDomain: "my-project-6b9f1.firebaseapp.com",
+      projectId: "my-project-6b9f1",
+      storageBucket: "my-project-6b9f1.firebasestorage.app",
+      messagingSenderId: "831843294334",
+      appId: "1:831843294f38e528cc874e4c2f",
+      measurementId: "G-BZJPSXR0D2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const patientTable = document.getElementById("patientTable");
+    const status = document.getElementById("status");
+    const totalBill = document.getElementById("totalBill");
+    const searchInput = document.getElementById("searchInput");
+
+    // Modal variables
+    let currentPatientId = null; 
+    let currentPatientData = null;
+
+    const modal = document.getElementById("billingModal");
+    const closeModalBtn = modal.querySelector(".close");
+    const saveBillingBtn = document.getElementById("saveBillingBtn");
+
+    const billAmountInput = document.getElementById("billAmountInput");
+    const paidAmountInput = document.getElementById("paidAmountInput");
+    const paymentModeSelect = document.getElementById("paymentModeSelect");
+
+    // Fetch patients from Firestore
+    async function fetchPatients() {
+      patientTable.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:10px;">Loading...</td></tr>`;
+      status.textContent = "";
+      totalBill.textContent = "";
+
+      const snapshot = await getDocs(collection(db, "patients"));
+      let total = 0;
+      patientTable.innerHTML = "";
+
+      const searchValue = searchInput.value.toLowerCase();
+
+      snapshot.forEach(docSnap => {
+        const patient = docSnap.data();
+
+        // filter by name
+        if (searchValue && !patient.name?.toLowerCase().includes(searchValue)) return;
+
+        const tr = document.createElement("tr");
+
+        const billAmount = patient.amount ? Number(patient.amount) : 0;
+        const paidAmount = patient.paid ? Number(patient.paid) : 0;
+        const paymentMode = patient.paymentMode || "—";
+
+        if (patient.amount) total += billAmount;
+
+        tr.innerHTML = `
+          <td>${patient.name || ''}</td>
+          <td>${patient.age || ''}</td>
+          <td>${patient.disease || ''}</td>
+
+          <td>${patient.stage || ''}</td>
+          <td>Ksh ${billAmount}</td>
+          <td>Ksh ${paidAmount}</td>
+          <td>${paymentMode}</td>
+          <td>
+            <button class="bill-btn">
+              ${billAmount > 0 ? "Update Bill" : "Bill Patient"}
+            </button>
+          </td>
+        `;
+
+        tr.querySelector(".bill-btn").onclick = () => billPatient(docSnap.id, patient);
+        patientTable.appendChild(tr);
+      });
+
+      totalBill.textContent = total > 0 ? `💵 Total Billed: Ksh ${total}` : "";
+    }
+
+    // Open modal
+    function billPatient(patientId, patient) {
+      currentPatientId = patientId;
+      currentPatientData = patient;
+
+      billAmountInput.value = patient.amount || "";
+      paidAmountInput.value = patient.paid || "";
+      paymentModeSelect.value = patient.paymentMode || "mpesa";
+
+      modal.style.display = "block";
+    }
+
+    // Close modal
+    closeModalBtn.onclick = () => modal.style.display = "none";
+
+    // Save billing data
+    saveBillingBtn.onclick = async () => {
+      const billAmount = billAmountInput.value;
+      const paidAmount = paidAmountInput.value;
+      const paymentMode = paymentModeSelect.value;
+
+      if (!billAmount || !paidAmount) {
+        alert("Please fill in all fields");
+        return;
+      }
+
+      await setDoc(doc(db, "patients", currentPatientId), {
+        amount: billAmount,
+        paid: paidAmount,
+        paymentMode: paymentMode,
+        stage: "billed"
+      }, { merge: true });
+
+      status.textContent = "✅ Billing saved!";
+      modal.style.display = "none";
+      fetchPatients();
+    };
+
+    // Close modal when clicking outside
+    window.onclick = (event) => {
+      if (event.target === modal) modal.style.display = "none";
+    };
+
+    fetchPatients();
+    window.fetchPatients = fetchPatients; // expose for refresh button
+  </script>
+</body>
+</html>

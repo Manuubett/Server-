@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediCare Hospital - Quality Healthcare</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a75bc;
+      --primary-dark: #0d5a9e;
+      --secondary: #4cc9c8;
+      --accent: #d32f2f;
+      --light: #f0f7ff;
+      --dark: #333;
+      --gray: #6c757d;
+      --white: #fff;
+    }
+    
+    body {
+      font-family: 'Open Sans', sans-serif;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    
+    h1, h2, h3, h4, h5 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+    }
+    
+    .bg-primary {
+      background-color: var(--primary) !important;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+    
+    .btn-outline-primary {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    
+    .btn-outline-primary:hover {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    
+    .text-primary {
+      color: var(--primary) !important;
+    }
+    
+    .navbar {
+      padding: 0.8rem 1rem;
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+    
+    .hero-section {
+      background: linear-gradient(rgba(26, 117, 188, 0.8), rgba(13, 90, 158, 0.8)), url('https://images.unsplash.com/photo-1588776814546-8f2cfd4bb02c?auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;
+      padding: 7rem 0;
+      color: white;
+    }
+    
+    .section-padding {
+      padding: 5rem 0;
+    }
+    
+    .section-title {
+      margin-bottom: 3rem;
+      position: relative;
+    }
+    
+    .section-title:after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 3px;
+      background: var(--primary);
+      margin: 15px auto 0;
+    }
+    
+    .feature-box {
+      padding: 2rem;
+      border-radius: 10px;
+      transition: all 0.3s;
+      height: 100%;
+    }
+    
+    .feature-box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    
+    .service-card {
+      border-radius: 10px;
+      overflow: hidden;
+      transition: all 0.3s;
+      height: 100%;
+    }
+    
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .service-card img {
+      transition: transform 0.5s;
+    }
+    
+    .service-card:hover img {
+      transform: scale(1.1);
+    }
+    
+    .doctor-card {
+      border-radius: 10px;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    
+    .doctor-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .emergency-section {
+      background: linear-gradient(rgba(220, 53, 69, 0.9), rgba(220, 53, 69, 0.9)), url('https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=1500&q=80') no-repeat center center/cover;
+      padding: 5rem 0;
+      color: white;
+    }
+    
+    .testimonial-card {
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      height: 100%;
+    }
+    
+    .testimonial-text {
+      position: relative;
+      padding-left: 2rem;
+    }
+    
+    .testimonial-text:before {
+      content: """;
+      font-size: 4rem;
+      color: var(--secondary);
+      opacity: 0.2;
+      position: absolute;
+      top: -1rem;
+      left: 0;
+    }
+    
+    footer {
+      background-color: var(--primary-dark);
+      color: white;
+      padding: 4rem 0 2rem;
+    }
+    
+    .footer-title {
+      position: relative;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .footer-title:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 40px;
+      height: 2px;
+      background-color: var(--secondary);
+    }
+    
+    .social-icon {
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      margin-right: 10px;
+      transition: all 0.3s;
+    }
+    
+    .social-icon:hover {
+      background-color: var(--secondary);
+      transform: translateY(-3px);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header/Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
+    <div class="container">
+      <a class="navbar-brand text-primary" href="#">
+        <i class="fas fa-hospital me-2"></i>Medi<span class="text-secondary">Care</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#services">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#doctors">Doctors</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#testimonials">Testimonials</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#contact">Contact</a>
+          </li>
+          
+         <li class="nav-item"><a class="nav-link" href="sign.html"><i class="fas fa-sign-out-alt me-1"></i>login</a></li>   
+        </ul>
+        <div class="ms-lg-3 mt-3 mt-lg-0">
+          <a href="#appointment" class="btn btn-primary me-2"><i class="fas fa-calendar-check me-1"></i> Appointment</a>
+          <a href="#login" class="btn btn-outline-primary"><i class="fas fa-user me-1"></i> Patient Portal</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="display-4 fw-bold mb-3">Quality Healthcare with Compassion</h1>
+          <p class="lead mb-4">At MediCare Hospital, we provide comprehensive medical services with state-of-the-art technology and a team of experienced healthcare professionals.</p>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="#services" class="btn btn-light btn-lg px-4">Our Services</a>
+            <a href="#contact" class="btn btn-outline-light btn-lg px-4">Contact Us</a>
+          </div>
+        </div>
+        <div class="col-lg-4 d-none d-lg-block">
+          <!-- Illustration or additional content can go here -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="section-padding bg-light">
+    <div class="container">
+      <h2 class="text-center section-title">Why Choose Us</h2>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-box bg-white text-center">
+            <div class="feature-icon">
+              <i class="fas fa-user-md"></i>
+            </div>
+            <h3>Expert Doctors</h3>
+            <p>Our team consists of highly qualified and experienced medical professionals dedicated to your health.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-box bg-white text-center">
+            <div class="feature-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <h3>24/7 Availability</h3>
+            <p>We provide round-the-clock emergency services and critical care when you need it most.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-box bg-white text-center">
+            <div class="feature-icon">
+              <i class="fas fa-procedures"></i>
+            </div>
+            <h3>Modern Equipment</h3>
+            <p>Our hospital is equipped with the latest medical technology for accurate diagnosis and treatment.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-box bg-white text-center">
+            <div class="feature-icon">
+              <i class="fas fa-ambulance"></i>
+            </div>
+            <h3>Emergency Care</h3>
+            <p>Our emergency department is always ready to handle critical situations with speed and expertise.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-box bg-white text-center">
+            <div class="feature-icon">
+              <i class="fas fa-heartbeat"></i>
+            </div>
+            <h3>Patient Care</h3>
+            <p>We prioritize patient comfort and satisfaction with personalized care plans and attention.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-box bg-white text-center">
+            <div class="feature-icon">
+              <i class="fas fa-pills"></i>
+            </div>
+            <h3>Pharmacy Services</h3>
+            <p>Our in-house pharmacy provides convenient access to medications and professional advice.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="section-padding" id="services">
+    <div class="container">
+      <h2 class="text-center section-title">Our Services</h2>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <div class="card service-card h-100">
+            <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Emergency Care">
+            <div class="card-body">
+              <h3 class="card-title">Emergency Care</h3>
+              <p class="card-text">24/7 emergency department with trauma center and critical care specialists ready to handle any medical emergency.</p>
+              <a href="#" class="btn btn-outline-primary">Learn More</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card service-card h-100">
+            <img src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Cardiology">
+            <div class="card-body">
+              <h3 class="card-title">Cardiology</h3>
+              <p class="card-text">Comprehensive heart health services including diagnostics, treatment, and surgical interventions for cardiac conditions.</p>
+              <a href="#" class="btn btn-outline-primary">Learn More</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card service-card h-100">
+            <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Pediatrics">
+            <div class="card-body">
+              <h3 class="card-title">Pediatrics</h3>
+              <p class="card-text">Specialized care for children from newborns to adolescents, with child-friendly facilities and experienced pediatricians.</p>
+              <a href="#" class="btn btn-outline-primary">Learn More</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card service-card h-100">
+            <img src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Surgery">
+            <div class="card-body">
+              <h3 class="card-title">Surgery</h3>
+              <p class="card-text">State-of-the-art operating rooms and skilled surgical teams for a wide range of surgical procedures.</p>
+              <a href="#" class="btn btn-outline-primary">Learn More</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card service-card h-100">
+            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Maternity">
+            <div class="card-body">
+              <h3 class="card-title">Maternity Care</h3>
+              <p class="card-text">Comprehensive care for expectant mothers, from prenatal to postpartum, in a comfortable and supportive environment.</p>
+              <a href="#" class="btn btn-outline-primary">Learn More</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card service-card h-100">
+            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Orthopedics">
+            <div class="card-body">
+              <h3 class="card-title">Orthopedics</h3>
+              <p class="card-text">Specialized care for bone and joint conditions, including sports injuries, fractures, and joint replacements.</p>
+              <a href="#" class="btn btn-outline-primary">Learn More</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission & Vision Section -->
+  <section class="section-padding bg-light" id="about">
+    <div class="container">
+      <h2 class="text-center section-title">Our Mission & Vision</h2>
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <i class="fas fa-bullseye fa-3x text-primary mb-3"></i>
+              <h3 class="card-title">Our Mission</h3>
+              <p class="card-text">To provide world-class healthcare services while ensuring patient comfort, safety, and satisfaction through compassionate care and innovative medical practices.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <i class="fas fa-eye fa-3x text-primary mb-3"></i>
+              <h3 class="card-title">Our Vision</h3>
+              <p class="card-text">To be recognized as a leading healthcare provider committed to excellence, accessibility, and holistic patient care in the region.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+              <i class="fas fa-heart fa-3x text-primary mb-3"></i>
+              <h3 class="card-title">Our Values</h3>
+              <p class="card-text">Compassion, Excellence, Integrity, Innovation, and Teamwork. These values guide our actions and decisions as we work to improve the health of our community.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Emergency Section -->
+  <section class="emergency-section text-center">
+    <div class="container">
+      <h2 class="display-5 fw-bold mb-3">Emergency Medical Care 24/7</h2>
+      <p class="lead mb-4">Our emergency department is always open, staffed with experienced doctors and nurses ready to provide immediate care for critical conditions.</p>
+      <a href="tel:+123456789" class="btn btn-light btn-lg px-4"><i class="fas fa-phone me-2"></i> Call Now: +123 456 789</a>
+    </div>
+  </section>
+
+  <!-- Doctors Section -->
+  <section class="section-padding" id="doctors">
+    <div class="container">
+      <h2 class="text-center section-title">Our Medical Specialists</h2>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="card doctor-card h-100">
+            <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Dr. Sarah Johnson">
+            <div class="card-body text-center">
+              <h3 class="card-title">Dr. Sarah Johnson</h3>
+              <p class="card-text text-primary">Chief of Cardiology</p>
+              <p class="card-text">Board-certified cardiologist with over 15 years of experience in treating heart conditions.</p>
+              <div class="d-flex justify-content-center">
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" class="social-icon"><i class="far fa-envelope"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card doctor-card h-100">
+            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Dr. Michael Chen">
+            <div class="card-body text-center">
+              <h3 class="card-title">Dr. Michael Chen</h3>
+              <p class="card-text text-primary">Head of Neurology</p>
+              <p class="card-text">Renowned neurologist specializing in the treatment of complex neurological disorders.</p>
+              <div class="d-flex justify-content-center">
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" class="social-icon"><i class="far fa-envelope"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card doctor-card h-100">
+            <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Dr. Emily Rodriguez">
+            <div class="card-body text-center">
+              <h3 class="card-title">Dr. Emily Rodriguez</h3>
+              <p class="card-text text-primary">Pediatric Specialist</p>
+              <p class="card-text">Dedicated pediatrician with a gentle approach to children's healthcare and development.</p>
+              <div class="d-flex justify-content-center">
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" class="social-icon"><i class="far fa-envelope"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card doctor-card h-100">
+            <img src="https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&w=600&q=80" class="card-img-top" alt="Dr. James Wilson">
+            <div class="card-body text-center">
+              <h3 class="card-title">Dr. James Wilson</h3>
+              <p class="card-text text-primary">Orthopedic Surgeon</p>
+              <p class="card-text">Expert in joint replacement and sports medicine with a focus on minimally invasive techniques.</p>
+              <div class="d-flex justify-content-center">
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" class="social-icon"><i class="far fa-envelope"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="section-padding bg-light" id="testimonials">
+    <div class="container">
+      <h2 class="text-center section-title">Patient Testimonials</h2>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="testimonial-card bg-white">
+            <div class="testimonial-text mb-3">
+              <p>The care I received at MediCare Hospital was exceptional. The doctors were knowledgeable and took the time to explain everything to me. The staff was friendly and professional.</p>
+            </div>
+            <div class="d-flex align-items-center">
+              <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Jennifer Smith" class="rounded-circle me-3" width="60" height="60">
+              <div>
+                <h5 class="mb-0">Jennifer Smith</h5>
+                <small class="text-primary">Cardiology Patient</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="testimonial-card bg-white">
+            <div class="testimonial-text mb-3">
+              <p>I'm so grateful for the excellent treatment my daughter received at MediCare. The pediatric team was compassionate and skilled. They made a difficult time much easier for our family.</p>
+            </div>
+            <div class="d-flex align-items-center">
+              <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Robert Johnson" class="rounded-circle me-3" width="60" height="60">
+              <div>
+                <h5 class="mb-0">Robert Johnson</h5>
+                <small class="text-primary">Parent of Pediatric Patient</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="testimonial-card bg-white">
+            <div class="testimonial-text mb-3">
+              <p>The emergency department staff saved my life after my heart attack. Their quick response and expert care made all the difference. I can't thank them enough.</p>
+            </div>
+            <div class="d-flex align-items-center">
+              <img src="https://randomuser.me/api/portraits/men/54.jpg" alt="William Davis" class="rounded-circle me-3" width="60" height="60">
+              <div>
+                <h5 class="mb-0">William Davis</h5>
+                <small class="text-primary">Emergency Patient</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="testimonial-card bg-white">
+            <div class="testimonial-text mb-3">
+              <p>From pre-natal care to delivery, the maternity team provided outstanding support. The facilities are modern and comfortable, making the birth of our first child a wonderful experience.</p>
+            </div>
+            <div class="d-flex align-items-center">
+              <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Sarah Thompson" class="rounded-circle me-3" width="60" height="60">
+              <div>
+                <h5 class="mb-0">Sarah Thompson</h5>
+                <small class="text-primary">Maternity Patient</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="section-padding" id="contact">
+    <div class="container">
+      <h2 class="text-center section-title">Contact Us</h2>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="bg-light p-4 rounded h-100">
+            <h3 class="mb-4">Get in Touch</h3>
+            <div class="d-flex align-items-start mb-4">
+              <i class="fas fa-map-marker-alt text-primary me-3 mt-1"></i>
+              <div>
+                <h5>Location</h5>
+                <p>123 Health Street, Medical District, City, Country</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-start mb-4">
+              <i class="fas fa-phone text-primary me-3 mt-1"></i>
+              <div>
+                <h5>Phone</h5>
+                <p>+123 456 7890</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-start mb-4">
+              <i class="fas fa-envelope text-primary me-3 mt-1"></i>
+              <div>
+                <h5>Email</h5>
+                <p>info@medicare-hospital.com</p>
+              </div>
+            </div>
+            <div class="d-flex align-items-start">
+              <i class="fas fa-clock text-primary me-3 mt-1"></i>
+              <div>
+                <h5>Working Hours</h5>
+                <p>Monday - Saturday: 8:00 AM - 8:00 PM<br>Emergency Services: 24/7</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="bg-light p-4 rounded h-100">
+            <h3 class="mb-4">Send Us a Message</h3>
+            <form>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="name" class="form-label">Your Name</label>
+                  <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="email" class="form-label">Your Email</label>
+                  <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="col-12">
+                  <label for="subject" class="form-label">Subject</label>
+                  <input type="text" class="form-control" id="subject" required>
+                </div>
+                <div class="col-12">
+                  <label for="message" class="form-label">Message</label>
+                  <textarea class="form-control" id="message" rows="5" required></textarea>
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-primary">Send Message</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <h4 class="footer-title">About Us</h4>
+          <p>MediCare Hospital is a leading healthcare provider committed to delivering exceptional medical services with compassion and innovation.</p>
+          <div class="d-flex">
+            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-2">
+          <h4 class="footer-title">Quick Links</h4>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-white text-decoration-none">Home</a></li>
+            <li><a href="#about" class="text-white text-decoration-none">About Us</a></li>
+            <li><a href="#services" class="text-white text-decoration-none">Services</a></li>
+            <li><a href="#doctors" class="text-white text-decoration-none">Doctors</a></li>
+            <li><a href="#contact" class="text-white text-decoration-none">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <h4 class="footer-title">Our Services</h4>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-white text-decoration-none">Emergency Care</a></li>
+            <li><a href="#" class="text-white text-decoration-none">Cardiology</a></li>
+            <li><a href="#" class="text-white text-decoration-none">Neurology</a></li>
+            <li><a href="#" class="text-white text-decoration-none">Orthopedics</a></li>
+            <li><a href="#" class="text-white text-decoration-none">Pediatrics</a></li>
+          </ul>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <h4 class="footer-title">Contact Info</h4>
+          <ul class="list-unstyled">
+            <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Health Street, City, Country</li>
+            <li class="mb-2"><i class="fas fa-phone me-2"></i> +123 456 7890</li>
+            <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@medicare-hospital.com</li>
+            <li><i class="fas fa-clock me-2"></i> 24/7 Emergency Services</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4 bg-light opacity-50">
+      <div class="text-center">
+        <p class="mb-0">&copy; 2023 MediCare Hospital. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

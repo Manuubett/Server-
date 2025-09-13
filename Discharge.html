@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🏥 Patient Discharge & Status</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1 {
+      color: #d32f2f;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    /* Search Bar */
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    .search-bar input:focus {
+      border-color: #d32f2f;
+      box-shadow: 0 0 5px rgba(211, 47, 47, 0.3);
+    }
+
+    .search-bar button {
+      padding: 10px 20px;
+      background-color: #d32f2f;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: bold;
+    }
+
+    .search-bar button:hover {
+      background-color: #b71c1c;
+    }
+
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead {
+      background-color: #d32f2f;
+      color: #fff;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tbody tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    /* Action button */
+    .discharge-btn {
+      background-color: #d32f2f;
+      color: #fff;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: bold;
+    }
+
+    .discharge-btn:hover {
+      background-color: #b71c1c;
+    }
+
+    /* Status message */
+    #status {
+      margin-top: 15px;
+      font-weight: 600;
+      color: green;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none; 
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+      animation: fadeIn 0.3s;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 8% auto;
+      padding: 25px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 450px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      animation: slideDown 0.4s ease-out;
+      position: relative;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      color: #d32f2f;
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+
+    .modal-content textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: none;
+      font-size: 14px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    .modal-content textarea:focus {
+      border-color: #d32f2f;
+      box-shadow: 0 0 5px rgba(211, 47, 47, 0.3);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .btn.cancel {
+      background-color: #777;
+      color: #fff;
+    }
+
+    .btn.save {
+      background-color: #d32f2f;
+      color: #fff;
+    }
+
+    .btn.cancel:hover {
+      background-color: #555;
+    }
+
+    .btn.save:hover {
+      background-color: #b71c1c;
+    }
+
+    /* Professional alert modal */
+    .alert-modal-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      max-width: 400px;
+      margin: 15% auto;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    .alert-modal-content p {
+      margin: 15px 0;
+      font-size: 16px;
+    }
+
+    .alert-modal-content button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      background-color: #d32f2f;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .alert-modal-content button:hover {
+      background-color: #b71c1c;
+    }
+
+    @keyframes fadeIn {
+      from {opacity:0;}
+      to {opacity:1;}
+    }
+
+    @keyframes slideDown {
+      from {opacity:0; transform: translateY(-20px);}
+      to {opacity:1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+  <h1>🏥 Patient Discharge & Status</h1>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input id="searchInput" type="text" placeholder="🔍 Search patient by name...">
+    <button onclick="fetchPatients()">Refresh</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Gender</th>
+        
+          <th>Bill Amount</th>
+          <th>Amount Paid</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="patientTable"></tbody>
+    </table>
+  </div>
+
+  <p id="status"></p>
+
+  <!-- Discharge Modal -->
+  <div id="dischargeModal" class="modal">
+    <div class="modal-content" id="draggableModal">
+      <h2>Discharge Summary</h2>
+      <textarea id="dischargeSummary" placeholder="Enter summary..."></textarea>
+      <div class="modal-actions">
+        <button class="btn cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn save" onclick="confirmDischarge()">Discharge</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Professional Alert Modal -->
+  <div id="alertModal" class="modal">
+    <div class="alert-modal-content">
+      <p id="alertMessage"></p>
+      <button id="alertOkBtn">OK</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCBYDdyJv3xjndhMm_86kiOFj047Zmoq28",
+      authDomain: "my-project-6b9f1.firebaseapp.com",
+      projectId: "my-project-6b9f1",
+      storageBucket: "my-project-6b9f1.firebasestorage.app",
+      messagingSenderId: "831843294334",
+      appId: "1:831843294f38e528cc874e4c2f",
+      measurementId: "G-BZJPSXR0D2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const patientTable = document.getElementById("patientTable");
+    const status = document.getElementById("status");
+    const searchInput = document.getElementById("searchInput");
+
+    const modal = document.getElementById('dischargeModal');
+    const summaryInput = document.getElementById('dischargeSummary');
+    let currentPatientId = null;
+    let currentPatientData = null;
+
+    const alertModal = document.getElementById('alertModal');
+    const alertMessage = document.getElementById('alertMessage');
+    const alertOkBtn = document.getElementById('alertOkBtn');
+
+    alertOkBtn.onclick = () => {
+      alertModal.style.display = 'none';
+    }
+
+    function showAlert(message) {
+      alertMessage.textContent = message;
+      alertModal.style.display = 'block';
+    }
+
+    async function fetchPatients() {
+      patientTable.innerHTML = `<tr><td colspan="13" style="text-align:center;padding:10px;">Loading...</td></tr>`;
+      status.textContent = "";
+
+      const snapshot = await getDocs(collection(db, "patients"));
+      patientTable.innerHTML = "";
+      const searchValue = searchInput.value.toLowerCase();
+
+      snapshot.forEach(docSnap => {
+        const patient = docSnap.data();
+        if (searchValue && !patient.name?.toLowerCase().includes(searchValue)) return;
+
+        const billAmount = patient.amount ? Number(patient.amount) : 0;
+        const paidAmount = patient.paid ? Number(patient.paid) : 0;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${patient.name || 'N/A'}</td>
+          <td>${patient.age || 'N/A'}</td>
+          <td>${patient.gender || 'Not specified'}</td>
+
+          <td>Ksh ${billAmount}</td>
+          <td>Ksh ${paidAmount}</td>
+          <td style="font-weight:bold;">${patient.stage || 'unknown'}</td>
+          <td>
+            ${patient.stage !== 'discharged' ? 
+              `<button class="discharge-btn">Discharge</button>` 
+              : '—'}
+          </td>
+        `;
+
+        if (patient.stage !== 'discharged') {
+          tr.querySelector(".discharge-btn").onclick = () => openModal(docSnap.id, patient);
+        }
+
+        patientTable.appendChild(tr);
+      });
+    }
+
+    function openModal(patientId, patient) {
+      const billAmount = patient.amount ? Number(patient.amount) : 0;
+      const paidAmount = patient.paid ? Number(patient.paid) : 0;
+
+      if (paidAmount <= 0) {
+        showAlert(`${patient.name} has not paid anything yet. Cannot discharge.`);
+        return;
+      }
+
+      if (paidAmount < billAmount) {
+        showAlert(`${patient.name} has not cleared the bill. Cannot discharge until payment is made.`);
+        return;
+      }
+
+      currentPatientId = patientId;
+      currentPatientData = patient;
+      summaryInput.value = "";
+      modal.style.display = 'block';
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      currentPatientId = null;
+      currentPatientData = null;
+    }
+
+    async function confirmDischarge() {
+      const summary = summaryInput.value.trim();
+      if (!summary) {
+        showAlert("Please enter a discharge summary.");
+        return;
+      }
+
+      await setDoc(doc(db, "patients", currentPatientId), {
+        dischargeSummary: summary,
+        stage: "discharged",
+        dischargeDate: new Date().toISOString()
+      }, { merge: true });
+
+      status.innerText = `✅ ${currentPatientData.name} discharged successfully!`;
+      closeModal();
+      fetchPatients();
+    }
+
+    window.onclick = function(event) {
+      if (event.target === modal) {
+        closeModal();
+      }
+      if (event.target === alertModal) {
+        alertModal.style.display = 'none';
+      }
+    }
+
+    fetchPatients();
+    window.fetchPatients = fetchPatients; // expose for refresh
+  </script>
+</body>
+</html>
