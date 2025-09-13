@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Admission System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f0f4f8;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #d1d9e6;
+    }
+    
+    h1 {
+      color: #2c5282;
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .controls {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+      background-color: #3182ce;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #2c5282;
+    }
+    
+    .btn-secondary {
+      background-color: #e2e8f0;
+      color: #4a5568;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #cbd5e0;
+    }
+    
+    .btn-success {
+      background-color: #38a169;
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background-color: #2f855a;
+    }
+    
+    .btn-warning {
+      background-color: #dd6b20;
+      color: white;
+    }
+    
+    .btn-warning:hover {
+      background-color: #c05621;
+    }
+    
+    .search-container {
+      position: relative;
+      margin-bottom: 25px;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 12px 15px 12px 40px;
+      border: 1px solid #cbd5e0;
+      border-radius: 8px;
+      font-size: 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0aec0;
+    }
+    
+    .filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background-color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+    }
+    
+    .filter-item.active {
+      background-color: #3182ce;
+      color: white;
+    }
+    
+    .patient-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .patient-card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+    
+    .patient-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .patient-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 10px;
+    }
+    
+    .patient-details {
+      color: #4a5568;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .patient-status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+    
+    .status-registered {
+      background-color: #ebf8ff;
+      color: #3182ce;
+    }
+    
+    .status-admitted {
+      background-color: #f0fff4;
+      color: #38a169;
+    }
+    
+    .status-icu {
+      background-color: #fed7d7;
+      color: #e53e3e;
+    }
+    
+    .status-pharmacy {
+      background-color: #feebcb;
+      color: #dd6b20;
+    }
+    
+    .ward-info {
+      background-color: #f7fafc;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 15px 0;
+      font-size: 14px;
+    }
+    
+    .card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .card-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    
+    .admit-btn {
+      background-color: #38a169;
+      color: white;
+    }
+    
+    .admit-btn:hover {
+      background-color: #2f855a;
+    }
+    
+    .details-btn {
+      background-color: #e2e8f0;
+      color: #4a5568;
+    }
+    
+    .details-btn:hover {
+      background-color: #cbd5e0;
+    }
+    
+    .no-patients {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px;
+      color: #a0aec0;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    }
+    
+    .no-patients i {
+      font-size: 48px;
+      margin-bottom: 15px;
+      display: block;
+    }
+    
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      background-color: white;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #2d3748;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #a0aec0;
+    }
+    
+    .modal-body {
+      padding: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #4a5568;
+    }
+    
+    .form-input, .form-select {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .form-row .form-group {
+      flex: 1;
+    }
+    
+    .modal-footer {
+      padding: 20px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #38a169;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    /* Tabs */
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #cbd5e0;
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #4a5568;
+      border-bottom: 3px solid transparent;
+    }
+    
+    .tab.active {
+      color: #3182ce;
+      border-bottom: 3px solid #3182ce;
+    }
+    
+    @media (max-width: 768px) {
+      .patient-list {
+        grid-template-columns: 1fr;
+      }
+      
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .controls {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-hospital"></i> Patient Admission System</h1>
+      <div class="controls">
+        <button class="btn btn-primary" id="refreshBtn"><i class="fas fa-sync"></i> Refresh</button>
+        <button class="btn btn-success" id="newPatientBtn"><i class="fas fa-plus"></i> New Patient</button>
+        <button class="btn btn-warning" id="admissionStatsBtn"><i class="fas fa-chart-bar"></i> Stats</button>
+      </div>
+    </header>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="all">All Patients</div>
+      <div class="tab" data-tab="admitted">Admitted</div>
+      <div class="tab" data-tab="registered">Registered Only</div>
+    </div>
+
+    <div class="search-container">
+      <i class="fas fa-search search-icon"></i>
+      <input 
+        type="text" 
+        id="searchBar" 
+        placeholder="Search patient by name, ID, or condition..." 
+        class="search-input"
+      >
+    </div>
+
+    <div class="filters">
+      <div class="filter-item active" data-ward="all">
+        <i class="fas fa-list"></i> All Wards
+      </div>
+      <div class="filter-item" data-ward="general">
+        <i class="fas fa-procedures"></i> General Ward
+      </div>
+      <div class="filter-item" data-ward="icu">
+        <i class="fas fa-heartbeat"></i> ICU
+      </div>
+      <div class="filter-item" data-ward="pharmacy">
+        <i class="fas fa-pills"></i> Pharmacy
+      </div>
+      <div class="filter-item" data-ward="maternity">
+        <i class="fas fa-baby"></i> Maternity
+      </div>
+      <div class="filter-item" data-ward="pediatrics">
+        <i class="fas fa-child"></i> Pediatrics
+      </div>
+    </div>
+
+    <div id="patientList" class="patient-list"></div>
+  </div>
+
+  <!-- Admission Modal -->
+  <div class="modal" id="admissionModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Admit Patient</h3>
+        <button class="close-btn" id="closeAdmissionModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Patient Information</label>
+          <input type="text" class="form-input" id="patientInfo" disabled>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Admission Type</label>
+            <select class="form-select" id="admissionType">
+              <option value="routine">Routine</option>
+              <option value="urgent">Urgent</option>
+              <option value="emergency">Emergency</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Priority Level</label>
+            <select class="form-select" id="priorityLevel">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Assign to Ward/Unit</label>
+          <select class="form-select" id="wardSelection">
+            <option value="">Select Ward/Unit</option>
+            <option value="general">General Ward</option>
+            <option value="icu">ICU (Intensive Care Unit)</option>
+            <option value="pharmacy">Pharmacy</option>
+            <option value="maternity">Maternity Ward</option>
+            <option value="pediatrics">Pediatrics Ward</option>
+            <option value="surgery">Surgery Department</option>
+            <option value="oncology">Oncology Department</option>
+            <option value="cardiology">Cardiology Department</option>
+          </select>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Room/Bed Number</label>
+            <input type="text" class="form-input" id="roomNumber" placeholder="e.g., 102-B">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Attending Physician</label>
+            <input type="text" class="form-input" id="attendingPhysician" placeholder="Dr. Smith">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Admission Notes</label>
+          <textarea class="form-input" id="admissionNotes" rows="3" placeholder="Additional notes..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelAdmission">Cancel</button>
+        <button class="btn btn-primary" id="confirmAdmission">Confirm Admission</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Patient Modal -->
+  <div class="modal" id="newPatientModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Register New Patient</h3>
+        <button class="close-btn" id="closeNewPatientModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-input" id="firstName" placeholder="John">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-input" id="lastName" placeholder="Doe">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Age</label>
+            <input type="number" class="form-input" id="age" placeholder="35">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <select class="form-select" id="gender">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Contact Number</label>
+          <input type="tel" class="form-input" id="contactNumber" placeholder="+1 234-567-8900">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Primary Condition/Diagnosis</label>
+          <input type="text" class="form-input" id="condition" placeholder="e.g., Pneumonia, Fracture">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Initial Assessment Notes</label>
+          <textarea class="form-input" id="initialNotes" rows="3" placeholder="Patient symptoms and initial observations..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelNewPatient">Cancel</button>
+        <button class="btn btn-primary" id="confirmNewPatient">Register Patient</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Modal -->
+  <div class="modal" id="statsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Admission Statistics</h3>
+        <button class="close-btn" id="closeStatsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="ward-info" style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 15px; color: #2c5282;">Current Occupancy</h4>
+          <div class="patient-details"><strong>General Ward:</strong> <span id="generalCount">0</span> patients</div>
+          <div class="patient-details"><strong>ICU:</strong> <span id="icuCount">0</span> patients</div>
+          <div class="patient-details"><strong>Pharmacy:</strong> <span id="pharmacyCount">0</span> patients</div>
+          <div class="patient-details"><strong>Maternity:</strong> <span id="maternityCount">0</span> patients</div>
+          <div class="patient-details"><strong>Pediatrics:</strong> <span id="pediatricsCount">0</span> patients</div>
+        </div>
+        
+        <div class="ward-info">
+          <h4 style="margin-bottom: 15px; color: #2c5282;">Admission Status</h4>
+          <div class="patient-details"><strong>Total Patients:</strong> <span id="totalCount">0</span></div>
+          <div class="patient-details"><strong>Admitted Patients:</strong> <span id="admittedCount">0</span></div>
+          <div class="patient-details"><strong>Registered (Not Admitted):</strong> <span id="registeredCount">0</span></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeStats">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCBYDdyJv3xjndhMm_86kiOFj047Zmoq28",
+      authDomain: "my-project-6b9f1.firebaseapp.com",
+      projectId: "my-project-6b9f1",
+      storageBucket: "my-project-6b9f1.appspot.com",
+      messagingSenderId: "831843294334",
+      appId: "1:831843294f38e528cc874e4c2f",
+      measurementId: "G-BZJPSXR0D2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const patientList = document.getElementById("patientList");
+    const searchBar = document.getElementById("searchBar");
+    const admissionModal = document.getElementById("admissionModal");
+    const newPatientModal = document.getElementById("newPatientModal");
+    const statsModal = document.getElementById("statsModal");
+    let allPatients = [];
+    let currentPatientId = null;
+6
+    // Load Patients from Firestore
+    async function loadPatients() {
+      try {
+        patientList.innerHTML = `<div class="no-patients"><i class="fas fa-spinner fa-spin"></i>Loading patients...</div>`;
+        
+        const querySnapshot = await getDocs(collection(db, "patients"));
+allPatients = [];
+querySnapshot.forEach((doc) => {
+  const p = doc.data();
+  allPatients.push({
+    id: doc.id,
+    name: p.name || "Unknown",
+    age: p.age || "N/A",
+    gender: p.gender || "Not specified",
+    condition: p.condition || "Not specified",
+    status: p.status || "registered",
+    ward: p.ward || "Not assigned",
+    wardNumber: p.wardNumber || "N/A",       // <-- Ward number
+    room: p.room || "N/A",
+    physician: p.physician || "N/A",
+    contact: p.contact || "N/A",
+    treatment: p.treatment || "N/A",         // <-- Treatment info
+    amount: p.amount ? Number(p.amount) : 0, // <-- Bill amount
+    paid: p.paid ? Number(p.paid) : 0,       // <-- Paid amount
+    notes: p.notes || "No notes",
+    admissionType: p.admissionType || "routine",
+    priority: p.priority || "medium",
+    stage: p.stage || "admitted",            // <-- Admission stage
+    registeredDate: p.registeredDate || new Date().toISOString()
+  });
+});
+        
+        updateStats();
+        filterPatients();
+      } catch (error) {
+        console.error("Error loading patients:", error);
+        patientList.innerHTML = `<div class="no-patients"><i class="fas fa-exclamation-triangle"></i>Error loading patient data</div>`;
+      }
+    }
+
+    // Display Patients to UI
+    function displayPatients(patients) {
+      patientList.innerHTML = "";
+      if (patients.length === 0) {
+        patientList.innerHTML = `<div class="no-patients"><i class="fas fa-user-injured"></i>No patients found</div>`;
+        return;
+      }
+
+      patients.forEach((p) => {
+        const card = document.createElement("div");
+        card.className = "patient-card";
+        
+        // Format date
+        const regDate = new Date(p.registeredDate);
+        const formattedDate = regDate.toLocaleDateString();
+        
+        card.innerHTML = `
+          <div class="patient-name">${p.name} <span style="font-size: 14px; color: #718096;">(#${p.id.slice(-4)})</span></div>
+          <div class="patient-details">Age: ${p.age} | Gender: ${p.gender}</div>
+          <div class="patient-details">Condition: ${p.condition}</div>
+          <div class="patient-details">Contact: ${p.contact}</div>
+          <div class="patient-details">Registered: ${formattedDate}</div>
+          <div class="patient-status status-${p.status}">${p.status.toUpperCase()}</div>
+          <div class="ward-info">
+            <div class="patient-details">Ward: ${p.ward}</div>
+            <div class="patient-details">Room: ${p.room}</div>
+            <div class="patient-details">Physician: ${p.physician}</div>
+          </div>
+          <div class="card-actions">
+            <button class="card-btn admit-btn" data-id="${p.id}">
+              <i class="fas fa-procedures"></i> Admit
+            </button>
+            <button class="card-btn details-btn" data-id="${p.id}">
+              <i class="fas fa-info-circle"></i> Details
+            </button>
+          </div>
+        `;
+        patientList.appendChild(card);
+      });
+      
+      // Add event listeners to buttons
+      document.querySelectorAll('.admit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          openAdmissionModal(id);
+        });
+      });
+      
+      document.querySelectorAll('.details-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          showPatientDetails(id);
+        });
+      });
+    }
+
+    // Filter patients based on search and filters
+    function filterPatients() {
+      const searchTerm = searchBar.value.trim().toLowerCase();
+      const activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+      const activeWard = document.querySelector('.filter-item.active').getAttribute('data-ward');
+      
+      const filtered = allPatients.filter((p) => {
+        // Search filter
+        const matchesSearch = p.name.toLowerCase().includes(searchTerm) || 
+                             p.condition.toLowerCase().includes(searchTerm) ||
+                             p.id.toLowerCase().includes(searchTerm);
+        
+        // Tab filter
+        let matchesTab = true;
+        if (activeTab === 'admitted') matchesTab = p.status === 'admitted';
+        if (activeTab === 'registered') matchesTab = p.status === 'registered';
+        
+        // Ward filter
+        let matchesWard = true;
+        if (activeWard !== 'all') matchesWard = p.ward.toLowerCase() === activeWard;
+        
+        return matchesSearch && matchesTab && matchesWard;
+      });
+      
+      displayPatients(filtered);
+    }
+
+    // Open admission modal
+    function openAdmissionModal(patientId) {
+      currentPatientId = patientId;
+      const patient = allPatients.find(p => p.id === patientId);
+      
+      if (patient) {
+        document.getElementById('patientInfo').value = `${patient.name} (Age: ${patient.age}, Condition: ${patient.condition})`;
+        admissionModal.style.display = 'flex';
+      }
+    }
+
+    // Show patient details
+    function showPatientDetails(patientId) {
+      const patient = allPatients.find(p => p.id === patientId);
+      
+      if (patient) {
+        alert(`Patient Details:\n\nName: ${patient.name}\nAge: ${patient.age}\nGender: ${patient.gender}\nCondition: ${patient.condition}\nStatus: ${patient.status}\nWard: ${patient.ward}\nRoom: ${patient.room}\nPhysician: ${patient.physician}\nContact: ${patient.contact}\nNotes: ${patient.notes}`);
+      }
+    }
+
+    // Confirm admission
+    async function confirmAdmission() {
+      const ward = document.getElementById('wardSelection').value;
+      const room = document.getElementById('roomNumber').value;
+      const physician = document.getElementById('attendingPhysician').value;
+      const notes = document.getElementById('admissionNotes').value;
+      const admissionType = document.getElementById('admissionType').value;
+      const priority = document.getElementById('priorityLevel').value;
+      
+      if (!ward) {
+        alert('Please select a ward/unit for admission.');
+        return;
+      }
+      
+      try {
+        // In a real application, you would update the patient document in Firestore
+        // For this example, we'll update the local data
+        const patientIndex = allPatients.findIndex(p => p.id === currentPatientId);
+        if (patientIndex !== -1) {
+          allPatients[patientIndex].status = 'admitted';
+          allPatients[patientIndex].ward = ward;
+          allPatients[patientIndex].room = room;
+          allPatients[patientIndex].physician = physician;
+          allPatients[patientIndex].notes = notes;
+          allPatients[patientIndex].admissionType = admissionType;
+          allPatients[patientIndex].priority = priority;
+          
+          showNotification(`Patient ${allPatients[patientIndex].name} admitted to ${ward} successfully.`);
+        }
+        
+        admissionModal.style.display = 'none';
+        updateStats();
+        filterPatients();
+      } catch (error) {
+        console.error("Error admitting patient:", error);
+        alert("Failed to admit patient. Please try again.");
+      }
+    }
+
+    // Register new patient
+    async function registerNewPatient() {
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const age = document.getElementById('age').value;
+      const gender = document.getElementById('gender').value;
+      const contact = document.getElementById('contactNumber').value;
+      const condition = document.getElementById('condition').value;
+      const notes = document.getElementById('initialNotes').value;
+      
+      if (!firstName || !lastName || !age) {
+        alert('Please fill in all required fields: First Name, Last Name, and Age.');
+        return;
+      }
+      
+      try {
+        // In a real application, you would add the patient to Firestore
+        const newPatient = {
+          name: `${firstName} ${lastName}`,
+          age: age,
+          gender: gender,
+          contact: contact,
+          condition: condition,
+          notes: notes,
+          status: 'registered',
+          ward: 'Not assigned',
+          room: 'N/A',
+          physician: 'N/A',
+          registeredDate: new Date().toISOString()
+        };
+        
+        // For this example, we'll add to local data with a mock ID
+        const newId = `pat-${Math.floor(Math.random() * 10000)}`;
+        allPatients.push({...newPatient, id: newId});
+        
+        showNotification(`Patient ${newPatient.name} registered successfully.`);
+        newPatientModal.style.display = 'none';
+        
+        // Clear the form
+        document.getElementById('firstName').value = '';
+        document.getElementById('lastName').value = '';
+        document.getElementById('age').value = '';
+        document.getElementById('contactNumber').value = '';
+        document.getElementById('condition').value = '';
+        document.getElementById('initialNotes').value = '';
+        
+        updateStats();
+        filterPatients();
+      } catch (error) {
+        console.error("Error registering patient:", error);
+        alert("Failed to register patient. Please try again.");
+      }
+    }
+
+    // Update statistics
+    function updateStats() {
+      const generalCount = allPatients.filter(p => p.ward === 'general').length;
+      const icuCount = allPatients.filter(p => p.ward === 'icu').length;
+      const pharmacyCount = allPatients.filter(p => p.ward === 'pharmacy').length;
+      const maternityCount = allPatients.filter(p => p.ward === 'maternity').length;
+      const pediatricsCount = allPatients.filter(p => p.ward === 'pediatrics').length;
+      
+      const totalCount = allPatients.length;
+      const admittedCount = allPatients.filter(p => p.status === 'admitted').length;
+      const registeredCount = allPatients.filter(p => p.status === 'registered').length;
+      
+      document.getElementById('generalCount').textContent = generalCount;
+      document.getElementById('icuCount').textContent = icuCount;
+      document.getElementById('pharmacyCount').textContent = pharmacyCount;
+      document.getElementById('maternityCount').textContent = maternityCount;
+      document.getElementById('pediatricsCount').textContent = pediatricsCount;
+      
+      document.getElementById('totalCount').textContent = totalCount;
+      document.getElementById('admittedCount').textContent = admittedCount;
+      document.getElementById('registeredCount').textContent = registeredCount;
+    }
+
+    // Show notification
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 500);
+      }, 3000);
+    }
+
+    // Initialize event listeners
+    function initEventListeners() {
+      // Search functionality
+      searchBar.addEventListener("input", filterPatients);
+      
+      // Tab functionality
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          filterPatients();
+        });
+      });
+      
+      // Ward filter functionality
+      document.querySelectorAll('.filter-item').forEach(filter => {
+        filter.addEventListener('click', () => {
+          document.querySelectorAll('.filter-item').forEach(f => f.classList.remove('active'));
+          filter.classList.add('active');
+          filterPatients();
+        });
+      });
+      
+      // Refresh button
+      document.getElementById('refreshBtn').addEventListener('click', loadPatients);
+      
+      // New patient button
+      document.getElementById('newPatientBtn').addEventListener('click', () => {
+        newPatientModal.style.display = 'flex';
+      });
+      
+      // Stats button
+      document.getElementById('admissionStatsBtn').addEventListener('click', () => {
+        statsModal.style.display = 'flex';
+      });
+      
+      // Modal close buttons
+      document.getElementById('closeAdmissionModal').addEventListener('click', () => {
+        admissionModal.style.display = 'none';
+      });
+      
+      document.getElementById('closeNewPatientModal').addEventListener('click', () => {
+        newPatientModal.style.display = 'none';
+      });
+      
+      document.getElementById('closeStatsModal').addEventListener('click', () => {
+        statsModal.style.display = 'none';
+      });
+      
+      document.getElementById('cancelAdmission').addEventListener('click', () => {
+        admissionModal.style.display = 'none';
+      });
+      
+      document.getElementById('cancelNewPatient').addEventListener('click', () => {
+        newPatientModal.style.display = 'none';
+      });
+      
+      document.getElementById('closeStats').addEventListener('click', () => {
+        statsModal.style.display = 'none';
+      });
+      
+      // Confirm admission button
+      document.getElementById('confirmAdmission').addEventListener('click', confirmAdmission);
+      
+      // Confirm new patient button
+      document.getElementById('confirmNewPatient').addEventListener('click', registerNewPatient);
+      
+      // Close modals when clicking outside
+      window.addEventListener('click', (e) => {
+        if (e.target === admissionModal) admissionModal.style.display = 'none';
+        if (e.target === newPatientModal) newPatientModal.style.display = 'none';
+        if (e.target === statsModal) statsModal.style.display = 'none';
+      });
+    }
+
+    // Initial load
+    window.addEventListener('DOMContentLoaded', () => {
+      initEventListeners();
+      loadPatients();
+    });
+  </script>
+</body>
+</html>

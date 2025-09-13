@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pharmacy Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f3f4f6;
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .heading {
+      font-size: 30px;
+      font-weight: bold;
+      margin-bottom: 24px;
+      color: #16a34a;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 12px;
+      margin-bottom: 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.4);
+    }
+
+    .table-container {
+      overflow-x: auto;
+      background-color: white;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background-color: #16a34a;
+      color: white;
+      padding: 12px;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    tr {
+      cursor: pointer;
+    }
+
+    tr:hover {
+      background-color: #f9fafb;
+    }
+
+    .form-container {
+      display: none;
+      background-color: white;
+      padding: 16px;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-top: 24px;
+      max-width: 512px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .form-title {
+      font-weight: 600;
+      font-size: 18px;
+      color: #166534;
+      margin-bottom: 12px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background-color: #16a34a;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .submit-btn:hover {
+      background-color: #15803d;
+    }
+
+    .status-message {
+      margin-top: 16px;
+      color: #16a34a;
+      font-weight: 500;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="heading">💊 Pharmacy Dashboard</h1>
+
+    <input id="searchInput" type="text" placeholder="🔍 Search patient by name..." class="search-input">
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Disease</th>
+
+            <th>Status</th>
+            <th>Stage</th>
+          </tr>
+        </thead>
+        <tbody id="patientTable"></tbody>
+      </table>
+    </div>
+
+    <!-- Medicine Form -->
+    <form id="pharmacyForm" class="form-container">
+      <h2 id="patientTitle" class="form-title"></h2>
+      <p><strong>Age:</strong> <span id="patientAge"></span></p>
+      <p><strong>Disease:</strong> <span id="patientDisease"></span></p>
+
+      <textarea id="medicines" placeholder="Medicines prescribed" class="form-input" required></textarea>
+      <input type="number" id="quantity" placeholder="Quantity" class="form-input" required>
+      <button type="submit" class="submit-btn">Save Medicine</button>
+    </form>
+
+    <p id="status" class="status-message"></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCBYDdyJv3xjndhMm_86kiOFj047Zmoq28",
+      authDomain: "my-project-6b9f1.firebaseapp.com",
+      projectId: "my-project-6b9f1",
+      storageBucket: "my-project-6b9f1.firebasestorage.app",
+      messagingSenderId: "831843294334",
+      appId: "1:831843294f38e528cc874e4c2f",
+      measurementId: "G-BZJPSXR0D2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const patientTable = document.getElementById("patientTable");
+    const searchInput = document.getElementById("searchInput");
+    const pharmacyForm = document.getElementById("pharmacyForm");
+    const status = document.getElementById("status");
+
+    let selectedPatientId = null;
+
+    async function fetchPatients() {
+      patientTable.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 16px;">Loading...</td></tr>`;
+      const snapshot = await getDocs(collection(db, "patients"));
+      patientTable.innerHTML = "";
+
+      const searchValue = searchInput.value.toLowerCase();
+
+      snapshot.forEach(docSnap => {
+        const patient = docSnap.data();
+
+        // Filter by search input
+        if (searchValue && !patient.name.toLowerCase().includes(searchValue)) return;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${patient.name}</td>
+          <td>${patient.age}</td>
+          <td>${patient.gender || ''}</td>
+          <td>${patient.disease}</td>
+
+          <td style="font-weight: 600;">${patient.patientStatus || ''}</td>
+          <td style="font-weight: 600;">${patient.stage}</td>
+        `;
+
+        // On row click, open pharmacy form with patient details
+        tr.addEventListener("click", () => {
+          selectedPatientId = docSnap.id;
+          pharmacyForm.style.display = 'block';
+          document.getElementById("patientTitle").innerText = `Patient: ${patient.name}`;
+          document.getElementById("patientAge").innerText = patient.age;
+          document.getElementById("patientDisease").innerText = patient.disease;
+        });
+
+        patientTable.appendChild(tr);
+      });
+    }
+
+    pharmacyForm.addEventListener("submit", async e => {
+      e.preventDefault();
+      const medicines = document.getElementById("medicines").value;
+      const quantity = document.getElementById("quantity").value;
+
+      if (!selectedPatientId) return;
+
+      await setDoc(doc(db, "patients", selectedPatientId), {
+        medicines,
+        quantity,
+        stage: "medicated"
+      }, { merge: true });
+
+      status.innerText = "✅ Medicines recorded successfully!";
+      pharmacyForm.reset();
+      pharmacyForm.style.display = 'none';
+      fetchPatients();
+    });
+
+    searchInput.addEventListener("input", fetchPatients);
+
+    fetchPatients();
+    window.fetchPatients = fetchPatients;
+  </script>
+</body>
+</html>
