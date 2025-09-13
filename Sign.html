@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up / Login - Medicare Hospital</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { 
+      background-color: #f4f6f8; 
+      font-family: Arial, sans-serif; 
+    }
+    .card { 
+      max-width: 450px; 
+      margin: 50px auto; 
+      padding: 30px; 
+      border-radius: 12px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+    }
+    h2 { 
+      color: #d32f2f; 
+      text-align: center; 
+      margin-bottom: 20px; 
+    }
+    .btn-primary { 
+      background-color: #d32f2f; 
+      border: none; 
+    }
+    .btn-primary:hover { 
+      background-color: #b71c1c; 
+    }
+    .logo { 
+      display: block; 
+      margin: 0 auto 15px auto; 
+      width: 80px; 
+      height: 80px; 
+    }
+    .thank-msg { 
+      text-align: center; 
+      color: green; 
+      font-weight: bold; 
+      margin-bottom: 10px; 
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <!-- Logo -->
+  <img src="https://img.icons8.com/color/96/hospital-room.png" alt="Medicare Hospital" class="logo">
+
+  <h2>Medicare Hospital</h2>
+
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-3" id="authTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="signup-tab" data-bs-toggle="tab" data-bs-target="#signup" type="button" role="tab">Sign Up</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab">Sign In</button>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <!-- Sign Up Form -->
+    <div class="tab-pane fade show active" id="signup" role="tabpanel">
+      <p class="thank-msg" id="signupMsg"></p>
+      <form id="signupForm">
+        <div class="mb-3">
+          <label for="signupEmail" class="form-label">Email address</label>
+          <input type="email" class="form-control" id="signupEmail" placeholder="Enter email" required>
+        </div>
+        <div class="mb-3">
+          <label for="signupPassword" class="form-label">Password</label>
+          <input type="password" class="form-control" id="signupPassword" placeholder="Enter password" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+      </form>
+    </div>
+
+    <!-- Login Form -->
+    <div class="tab-pane fade" id="login" role="tabpanel">
+      <form id="loginForm">
+        <div class="mb-3">
+          <label for="loginEmail" class="form-label">Email address</label>
+          <input type="email" class="form-control" id="loginEmail" placeholder="Enter email" required>
+        </div>
+        <div class="mb-3">
+          <label for="loginPassword" class="form-label">Password</label>
+          <input type="password" class="form-control" id="loginPassword" placeholder="Enter password" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <p id="status" class="text-center mt-3"></p>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCBYDdyJv3xjndhMm_86kiOFj047Zmoq28",
+    authDomain: "my-project-6b9f1.firebaseapp.com",
+    projectId: "my-project-6b9f1",
+    storageBucket: "my-project-6b9f1.firebasestorage.app",
+    messagingSenderId: "831843294334",
+    appId: "1:831843294f38e528cc874e4c2f",
+    measurementId: "G-BZJPSXR0D2"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const signupForm = document.getElementById('signupForm');
+  const loginForm = document.getElementById('loginForm');
+  const signupMsg = document.getElementById('signupMsg');
+  const status = document.getElementById('status');
+
+  // Sign Up
+  signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      signupMsg.textContent = "✅ Thank you for signing up to Medicare Hospital!";
+      signupForm.reset();
+    } catch (error) {
+      signupMsg.style.color = 'red';
+      signupMsg.textContent = `❌ ${error.message}`;
+    }
+  });
+
+  // Login
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      status.style.color = 'green';
+      status.textContent = "✅ Login successful! Redirecting...";
+      setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
+    } catch (error) {
+      status.style.color = 'red';
+      status.textContent = `❌ ${error.message}`;
+    }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
